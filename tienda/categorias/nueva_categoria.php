@@ -22,7 +22,7 @@
         */
 
     ?>
-        <style>
+    <style>
         .error {
             color: red;
         }
