@@ -19,6 +19,11 @@
             exit;
         } */
     ?>
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -27,9 +32,9 @@
         if($_SERVER["REQUEST_METHOD"] == "POST") {
             $tmp_nombre = $_POST["nombre"];
             $tmp_precio = $_POST["precio"];
-            $tmp_categoria = $_POST["categoria"];
+            if(isset($_POST["categoria"])) $tmp_categoria = $_POST["categoria"];
+            else $tmp_categoria = "";
             $tmp_stock = $_POST["stock"];
-            $tmp_imagen = $_POST["imagen"];
             $tmp_descripcion = $_POST["descripcion"];
 
             $nombre_imagen = $_FILES["imagen"]["name"];
@@ -51,7 +56,7 @@
             } else {
                 $patron = "/^[0-9]{1,4}(\.[0-9]{1,2})?$/";
                 if(!preg_match($patron, $tmp_precio)) {
-                    $err_precio = "El precio solo puede contener números";
+                    $err_precio = "El precio solo puede contener 6 dígitos (4 enteros y 2 decimales)";
                 } else {
                     $precio = $tmp_precio;
                 }
@@ -77,14 +82,14 @@
                 }
             }
 
-            if($tmp_imagen == ''){
+            if($nombre_imagen == ''){
                 $err_imagen = "La imagen es obligatoria";
             } else {
-                if(strlen($tmp_imagen) > 60){
+                if(strlen($nombre_imagen) > 60){
                     $err_imagen = "La categoria no puede ser mayor a 60 carácteres";
                 } else {
                     move_uploaded_file($ubicacion_temporal, $ubicacion_final);
-                    $imagen = $tmp_imagen;
+                    $imagen = $nombre_imagen;
                 }
             }
 
@@ -98,9 +103,9 @@
                 }
             }
 
-            if(isset($nombre) && isset($precio) && isset($categoria) && isset($stock) && isset($ubicacion_final) && isset($descripcion)){
-            $sql = "INSERT INTO producto (nombre, precio, categoria, stock, imagen, descripcion) 
-                VALUES ('$nombre', '$precio', $categoria, $stock, '$ubicacion_final', '$descripcion')";
+            if(isset($nombre) && isset($precio) && isset($categoria) && isset($stock) && isset($nombre_imagen) && isset($descripcion)){
+            $sql = "INSERT INTO productos (nombre, precio, categoria, stock, imagen, descripcion) 
+                VALUES ('$nombre', $precio, '$categoria', $stock, '$nombre_imagen', '$descripcion')";
 
             $_conexion -> query($sql);
                 
@@ -109,10 +114,10 @@
 
         $sql = "SELECT * FROM categorias ORDER BY categoria";
         $resultado = $_conexion -> query($sql);
-        $estudios = [];
+        $categorias = [];
 
         while($fila = $resultado -> fetch_assoc()) {
-            array_push($estudios, $fila["categoria"]);
+            array_push($categorias, $fila["categoria"]);
         }
  
         ?>

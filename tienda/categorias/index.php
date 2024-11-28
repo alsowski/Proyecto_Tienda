@@ -27,27 +27,22 @@
         <?php
             if($_SERVER["REQUEST_METHOD"] == "POST") {
                 $categoria = $_POST["categoria"];
-                echo "<h1>$categoria</h1>";
-                //  borrar el anime
-                $sql = "DELETE FROM categorias WHERE categoria = $categoria";
+                $sql = "DELETE FROM categorias WHERE categoria = '$categoria'";
                 $_conexion -> query($sql);
             }
 
             $sql = "SELECT * FROM categorias";
             $resultado = $_conexion -> query($sql);
-            /**
-             * Aplicamos la función query a la conexión, donde se ejecuta la sentencia SQL hecha
-             * 
-             * El resultado se almacena $resultado, que es un objeto con una estructura parecida
-             * a los arrays
-             */
         ?>
-        <a class="btn btn-secondary" href="nuev_categoria.php">Crear nueva categoria</a><br><br>
+        <a class="btn btn-secondary" href="nueva_categoria.php">Crear nueva categoria</a>
+        <a class="btn btn-secondary" href="../productos/index.php">Tabla Productos</a><br><br>
         <table class="table table-striped table-hover">
             <thead class="table-dark">
                 <tr>
                     <th>Categoría</th>
                     <th>Descripción</th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -57,9 +52,6 @@
                         echo "<td>" . $fila["categoria"] . "</td>";
                         echo "<td>" . $fila["descripcion"] . "</td>";
                         ?>
-                        <td>
-                            <img width="100" height="200" src="<?php echo $fila["imagen"] ?>">
-                        </td>
                         <td>
                             <a class="btn btn-primary" 
                                href="editar_categoria.php?categoria=<?php echo $fila["categoria"] ?>">Editar</a>
