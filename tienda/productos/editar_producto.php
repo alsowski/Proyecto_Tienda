@@ -11,21 +11,28 @@
 
         require('../util/conexion.php');
 
-/*         session_start();
-        if(isset($_SESSION["usuario"])) {
-            echo "<h2>Bienvenid@ " . $_SESSION["usuario"] . "</h2>";
-        }else{
-            header("location: usuario/iniciar_sesion.php");
+        session_start();
+        if (!isset($_SESSION["usuario"])) { 
+            header("location: ../usuario/iniciar_sesion.php");
             exit;
-        } */
+        }
     ?>
     <style>
-        .error{
+        .error {
             color: red;
         }
     </style>
 </head>
 <body>
+    <?php
+    function depurar(string $entrada) : string {
+        $salida = htmlspecialchars($entrada);
+        $salida = trim($salida);
+        $salida = stripslashes($salida);
+        $salida = preg_replace('!\s+!', ' ', $salida);
+        return $salida;
+    }
+    ?>
     <div class="container">
         <h1>Editar Producto</h1>
         <?php
@@ -51,11 +58,11 @@
         }
 
         if($_SERVER["REQUEST_METHOD"] == "POST") {
-            $tmp_nombre = $_POST["nombre"];
-            $tmp_precio = $_POST["precio"];
-            $tmp_categoria = $_POST["categoria"];
-            $tmp_stock = $_POST["stock"];
-            $tmp_descripcion = $_POST["descripcion"];
+            $tmp_nombre = depurar($_POST["nombre"]);
+            $tmp_precio = depurar($_POST["precio"]);
+            $tmp_categoria = depurar($_POST["categoria"]);
+            $tmp_stock = depurar($_POST["stock"]);
+            $tmp_descripcion = depurar($_POST["descripcion"]);
 
             if($tmp_nombre == ''){
                 $err_nombre = "El nombre es obligatorio";
@@ -63,18 +70,31 @@
                 if(strlen($tmp_nombre) > 50){
                     $err_nombre = "El nombre no puede ser mayor a 50 carácteres";
                 } else {
-                    $nombre = $tmp_nombre;
+                    $patron = "/^[0-9a-zA-Z áéíóúÁÉÍÓÚ]+$/";
+                    if(!preg_match($patron, $tmp_nombre)){
+                        $err_nombre = "El nombre solo puede tener letras, numeros y espacios";
+                    } else {
+                        $sql = "UPDATE productos SET nombre = '$tmp_nombre' WHERE nombre = '$nombre'";
+                        $_conexion -> query($sql);
+                        $nombre = $tmp_nombre;
+                    }
                 }
             }
 
             if($tmp_precio == ''){
                 $err_precio = "El precio es obligatorio";
             } else {
-                $patron = "/^[0-9]{1,4}(\.[0-9]{1,2})?$/";
-                if(!preg_match($patron, $tmp_precio)) {
-                    $err_precio = "El precio solo puede contener números";
+                if(!filter_var($tmp_precio,FILTER_VALIDATE_FLOAT)){
+                    $err_precio = "El precio tiene que ser un numero";
                 } else {
-                    $precio = $tmp_precio;
+                    $patron = "/^[0-9]{1,4}(\.[0-9]{1,2})?$/";
+                    if(!preg_match($patron, $tmp_precio)) {
+                        $err_precio = "El precio solo puede contener números";
+                    } else {
+                        $sql = "UPDATE productos SET precio = '$tmp_precio' WHERE precio = '$precio'";
+                        $_conexion -> query($sql);
+                        $precio = $tmp_precio;
+                    }
                 }
             }
 
@@ -84,6 +104,8 @@
                 if(strlen($tmp_categoria) > 30){
                     $err_categoria = "La categoria no puede ser mayor a 30 carácteres";
                 } else {
+                    $sql = "UPDATE productos SET categoria = '$tmp_categoria' WHERE categoria = '$categoria'";
+                    $_conexion -> query($sql);
                     $categoria = $tmp_categoria;
                 }
             }
@@ -94,6 +116,8 @@
                 if(!filter_var($tmp_stock,FILTER_VALIDATE_INT)){
                     $err_stock = "El stock tiene que ser un numero entero";
                 } else {
+                    $sql = "UPDATE productos SET descripcion = '$tmp_stock' WHERE descripcion = '$stock'";
+                    $_conexion -> query($sql);
                     $stock = $tmp_stock;
                 }
             }
@@ -104,6 +128,8 @@
                 if(strlen($tmp_descripcion) > 30){
                     $err_descripcion = "La descripción no puede ser mayor a 255 carácteres";
                 } else {
+                    $sql = "UPDATE productos SET descripcion = '$tmp_descripcion' WHERE descripcion = '$descripcion'";
+                    $_conexion -> query($sql);
                     $descripcion = $tmp_descripcion;
                 }
             }
@@ -136,11 +162,13 @@
                 <label class="form-label">Categoria</label>
                 <select class="form-select" name="categoria">
                 <option value="<?php echo $categoria ?>" selected><?php echo $categoria ?></option>                    
-                <?php
-                    foreach($categorias as $categoria) { ?>
-                        <option value="<?php echo $categoria ?>">
-                            <?php echo $categoria ?>
-                        </option>
+                <?php 
+                    foreach($categorias as $categoriass) { ?>
+                        <?php if($categoriass != $categoria){ ?>
+                            <option value="<?php echo $categoriass ?>">
+                                <?php echo $categoriass; ?>
+                            </option>
+                        <?php } ?>
                     <?php } ?>
                 </select>
                 <?php if(isset($err_categoria)) echo "<span class='error'>$err_categoria</span>" ?>

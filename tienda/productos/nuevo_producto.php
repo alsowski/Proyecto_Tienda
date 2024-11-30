@@ -11,13 +11,11 @@
 
         require('../util/conexion.php');
 
-/*         session_start();
-        if(isset($_SESSION["usuario"])) {
-            echo "<h2>Bienvenid@ " . $_SESSION["usuario"] . "</h2>";
-        }else{
-            header("location: usuario/iniciar_sesion.php");
+        session_start();
+        if (!isset($_SESSION["usuario"])) { 
+            header("location: ../usuario/iniciar_sesion.php");
             exit;
-        } */
+        }
     ?>
     <style>
         .error {
@@ -26,16 +24,25 @@
     </style>
 </head>
 <body>
+    <?php
+    function depurar(string $entrada) : string {
+        $salida = htmlspecialchars($entrada);
+        $salida = trim($salida);
+        $salida = stripslashes($salida);
+        $salida = preg_replace('!\s+!', ' ', $salida);
+        return $salida;
+    }
+    ?>
     <div class="container">
         <h1>Nuevo Producto</h1>
         <?php
         if($_SERVER["REQUEST_METHOD"] == "POST") {
-            $tmp_nombre = $_POST["nombre"];
-            $tmp_precio = $_POST["precio"];
-            if(isset($_POST["categoria"])) $tmp_categoria = $_POST["categoria"];
+            $tmp_nombre = depurar($_POST["nombre"]);
+            $tmp_precio = depurar($_POST["precio"]);
+            if(isset($_POST["categoria"])) $tmp_categoria = depurar($_POST["categoria"]);
             else $tmp_categoria = "";
-            $tmp_stock = $_POST["stock"];
-            $tmp_descripcion = $_POST["descripcion"];
+            $tmp_stock = depurar($_POST["stock"]);
+            $tmp_descripcion = depurar($_POST["descripcion"]);
 
             $nombre_imagen = $_FILES["imagen"]["name"];
             $ubicacion_temporal = $_FILES["imagen"]["tmp_name"];
@@ -47,18 +54,27 @@
                 if(strlen($tmp_nombre) > 50){
                     $err_nombre = "El nombre no puede ser mayor a 50 carácteres";
                 } else {
-                    $nombre = $tmp_nombre;
+                    $patron = "/^[0-9a-zA-Z áéíóúÁÉÍÓÚ]+$/";
+                    if(!preg_match($patron, $tmp_nombre)){
+                        $err_nombre = "El nombre solo puede tener letras, numeros y espacios";
+                    } else{
+                        $nombre = $tmp_nombre;
+                    }                
                 }
             }
 
             if($tmp_precio == ''){
                 $err_precio = "El precio es obligatorio";
             } else {
-                $patron = "/^[0-9]{1,4}(\.[0-9]{1,2})?$/";
-                if(!preg_match($patron, $tmp_precio)) {
-                    $err_precio = "El precio solo puede contener 6 dígitos (4 enteros y 2 decimales)";
+                if(!filter_var($tmp_precio,FILTER_VALIDATE_FLOAT)){
+                    $err_precio = "El precio tiene que ser un numero";
                 } else {
-                    $precio = $tmp_precio;
+                    $patron = "/^[0-9]{1,4}(\.[0-9]{1,2})?$/";
+                    if(!preg_match($patron, $tmp_precio)) {
+                        $err_precio = "El precio solo puede contener 6 dígitos (4 enteros y 2 decimales)";
+                    } else {
+                        $precio = $tmp_precio;
+                    }
                 }
             }
 
@@ -68,7 +84,19 @@
                 if(strlen($tmp_categoria) > 30){
                     $err_categoria = "La categoria no puede ser mayor a 30 carácteres";
                 } else {
-                    $categoria = $tmp_categoria;
+                    $sql = "SELECT * FROM categorias ORDER BY categoria";
+                    $resultado = $_conexion -> query($sql);
+                    $categorias = [];
+            
+                    while($fila = $resultado -> fetch_assoc()) {
+                        array_push($categorias, $fila["categoria"]);
+                    }
+                    
+                    if(!in_array($tmp_categoria,$categorias)){
+                        $err_categoria = "La categoria no existe";
+                    } else {
+                        $categoria = $tmp_categoria;
+                    }
                 }
             }
 
@@ -110,14 +138,6 @@
             $_conexion -> query($sql);
                 
             }
-        }
-
-        $sql = "SELECT * FROM categorias ORDER BY categoria";
-        $resultado = $_conexion -> query($sql);
-        $categorias = [];
-
-        while($fila = $resultado -> fetch_assoc()) {
-            array_push($categorias, $fila["categoria"]);
         }
  
         ?>

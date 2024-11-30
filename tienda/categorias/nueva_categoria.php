@@ -11,16 +11,11 @@
 
         require('../util/conexion.php');
 
-        /*
         session_start();
-        if(isset($_SESSION["usuario"])) {
-            echo "<h2>Bienvenid@ " . $_SESSION["usuario"] . "</h2>";
-        }else{
-            header("location: usuario/iniciar_sesion.php");
+        if (!isset($_SESSION["usuario"])) { 
+            header("location: ../usuario/iniciar_sesion.php");
             exit;
-        } 
-        */
-
+        }
     ?>
     <style>
         .error {
@@ -29,12 +24,21 @@
     </style>
 </head>
 <body>
+    <?php
+    function depurar(string $entrada) : string {
+        $salida = htmlspecialchars($entrada);
+        $salida = trim($salida);
+        $salida = stripslashes($salida);
+        $salida = preg_replace('!\s+!', ' ', $salida);
+        return $salida;
+    }
+    ?>
     <div class="container">
         <h1>Nueva Categoria</h1>
         <?php
         if($_SERVER["REQUEST_METHOD"] == "POST") {
-            $tmp_categoria = $_POST["categoria"];
-            $tmp_descripcion = $_POST["descripcion"];
+            $tmp_categoria = depurar($_POST["categoria"]);
+            $tmp_descripcion = depurar($_POST["descripcion"]);
 
             if($tmp_categoria == ''){
                 $err_categoria = "La categoría es obligatoria";
