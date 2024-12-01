@@ -39,7 +39,7 @@
         $usuario = $_GET["usuario"];
         $sql = "SELECT * FROM usuarios WHERE usuario = '$usuario'";
         $resultado = $_conexion -> query($sql);
-
+        
         while($fila = $resultado -> fetch_assoc()) {
             $contrasena = $fila["contrasena"];
         }
@@ -50,21 +50,17 @@
             if($tmp_contrasena == ""){
                 $err_contrasena = "La contraseña es obligatoria";
             } else {
-                if($tmp_contrasena == $contrasena){
-                    $err_contrasena = "La contraseña no puede ser idéntica a la anterior";
+                if( strlen($tmp_contrasena) < 8 || strlen($tmp_contrasena) > 15){
+                    $err_contrasena = "La contraseña debe tener como minimo 8 y maximo 15 caracteres";
                 } else {
-                    if(strlen($tmp_contrasena) < 8 || strlen($tmp_contrasena) > 15){
-                        $err_contrasena = "La contraseña debe tener como minimo 8 y maximo 15 caracteres";
+                    $patron = "/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/";
+                    if(!preg_match($patron, $tmp_contrasena)){
+                        $err_contrasena = "La contraseña debe tener letras en minúsculas y mayúsculas, números y puede tener carácteres especiales";
                     } else {
-                        $patron = "/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/";
-                        if(!preg_match($patron, $tmp_contrasena)){
-                            $err_contrasena = "La contraseña debe tener letras en minúsculas y mayúsculas, números y puede tener carácteres especiales";
-                        } else {
-                            $contrasena_cifrada = password_hash($tmp_contrasena,PASSWORD_DEFAULT);
-                            $sql = "UPDATE usuarios SET contrasena = '$contrasena_cifrada' WHERE usuario = '$usuario'";
-                            $_conexion -> query($sql);
-                        }                    
-                    }
+                        $contrasena_cifrada = password_hash($tmp_contrasena,PASSWORD_DEFAULT);
+                        $sql = "UPDATE usuarios SET contrasena = '$contrasena_cifrada' WHERE usuario = '$usuario'";
+                        $_conexion -> query($sql);
+                    }                    
                 }
             }
         }
