@@ -78,7 +78,7 @@
             <div class="mb-3">
                 <input type="hidden" name="usuario" value="<?php echo $usuario ?>">
                 <input class="btn btn-primary" type="submit" value="Confirmar">
-                <a href="../index.php" class="btn btn-outline-secondary">Volver a inicio</a>
+                <a href="../index.php" class="btn btn-secondary">Volver a inicio</a>
             </div>
         </form>
     </div>

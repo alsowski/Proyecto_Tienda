@@ -36,7 +36,6 @@
     <div class="container">
         <h1>Editar Producto</h1>
         <?php
-
         $id_producto = $_GET["id_producto"];
         $sql = "SELECT * FROM productos WHERE id_producto = '$id_producto'";
         $resultado = $_conexion -> query($sql);
@@ -67,8 +66,8 @@
             if($tmp_nombre == ''){
                 $err_nombre = "El nombre es obligatorio";
             } else {
-                if(strlen($tmp_nombre) > 50){
-                    $err_nombre = "El nombre no puede ser mayor a 50 carácteres";
+                if(strlen($tmp_nombre) > 50 || strlen($tmp_nombre) < 3){
+                    $err_nombre = "El nombre no puede ser menor a 3 y mayor a 50 carácteres";
                 } else {
                     $patron = "/^[0-9a-zA-Z áéíóúÁÉÍÓÚ]+$/";
                     if(!preg_match($patron, $tmp_nombre)){
@@ -104,7 +103,7 @@
                 if(strlen($tmp_categoria) > 30){
                     $err_categoria = "La categoria no puede ser mayor a 30 carácteres";
                 } else {
-                    $sql = "UPDATE productos SET categoria = '$tmp_categoria' WHERE categoria = '$categoria'";
+                    $sql = "UPDATE productos SET categoria = '$tmp_categoria' WHERE id_producto = '$id_producto'";
                     $_conexion -> query($sql);
                     $categoria = $tmp_categoria;
                 }
@@ -113,7 +112,7 @@
             if($tmp_stock == ''){
                 $stock = 0;
             } else {
-                if(!filter_var($tmp_stock,FILTER_VALIDATE_INT)){
+                if(!filter_var($tmp_stock,FILTER_VALIDATE_INT) && !($tmp_stock == 0)){
                     $err_stock = "El stock tiene que ser un numero entero";
                 } else {
                     $sql = "UPDATE productos SET descripcion = '$tmp_stock' WHERE descripcion = '$stock'";
@@ -125,7 +124,7 @@
             if($tmp_descripcion == ''){
                 $err_descripcion = "La descripción es obligatoria";
             } else {
-                if(strlen($tmp_descripcion) > 30){
+                if(strlen($tmp_descripcion) > 255){
                     $err_descripcion = "La descripción no puede ser mayor a 255 carácteres";
                 } else {
                     $sql = "UPDATE productos SET descripcion = '$tmp_descripcion' WHERE descripcion = '$descripcion'";

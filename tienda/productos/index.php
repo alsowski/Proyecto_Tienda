@@ -14,8 +14,8 @@
         session_start();
         if (isset($_SESSION["usuario"])) { ?>
             <h2>Bienvenid@ <?php echo $_SESSION["usuario"] ?> </h2>
-            <a class="btn btn-warning" href="../usuario/cerrar_sesion.php">Cerrar sesion</a>
-            <a class="btn btn-primary" href="../usuario/cambiar_credenciales.php?usuario=<?php echo $_SESSION["usuario"] ?>">Cambiar credenciales</a>
+            <a class="btn btn-warning" href="../usuario/cambiar_credenciales.php?usuario=<?php echo $_SESSION["usuario"] ?>">Cambiar credenciales</a>
+            <a class="btn btn-danger" href="../usuario/cerrar_sesion.php">Cerrar sesion</a>
         <?php } else {
             header("location: ../usuario/iniciar_sesion.php");
             exit;
@@ -36,8 +36,8 @@
             $resultado = $_conexion -> query($sql);
 
         ?>
-        <a class="btn btn-secondary" href="nuevo_producto.php">Crear nuevo producto</a>
-        <a class="btn btn-secondary" href="../categorias/index.php">Tabla Categorias</a><br><br>
+        <a class="btn btn-outline-primary" href="nuevo_producto.php">Crear nuevo producto</a>
+        <a class="btn btn-outline-secondary" href="../categorias/index.php">Tabla Categorias</a><br><br>
         <table class="table table-striped table-hover">
             <thead class="table-dark">
                 <tr>
@@ -82,7 +82,7 @@
                 ?>
             </tbody>
         </table>
-        <a href="../index.php" class="btn btn-outline-secondary">Volver a inicio</a>
+        <a href="../index.php" class="btn btn-success">Volver a inicio</a>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
