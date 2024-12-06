@@ -106,7 +106,11 @@
                 if(!filter_var($tmp_stock,FILTER_VALIDATE_INT) && !($tmp_stock == 0)){
                     $err_stock = "El stock tiene que ser un numero entero";
                 } else {
+                    if ($tmp_stock < 0 || $tmp_stock > 2147483647) {
+                        $err_stock = "El stock tiene que ser un numero entero mayor de 0 y menor de 2147483647";
+                    } else {
                     $stock = $tmp_stock;
+                    }
                 }
             }
 

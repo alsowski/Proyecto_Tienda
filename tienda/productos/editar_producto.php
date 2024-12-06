@@ -121,9 +121,13 @@
                 if(!filter_var($tmp_stock,FILTER_VALIDATE_INT) && !($tmp_stock == 0)){
                     $err_stock = "El stock tiene que ser un numero entero";
                 } else {
-                    $sql = "UPDATE productos SET descripcion = '$tmp_stock' WHERE descripcion = '$stock'";
-                    $_conexion -> query($sql);
-                    $stock = $tmp_stock;
+                    if ($tmp_stock < 0 || $tmp_stock > 2147483647) {
+                        $err_stock = "El stock tiene que ser un numero entero mayor de 0 y menor de 2147483647";
+                    } else {
+                        $sql = "UPDATE productos SET descripcion = '$tmp_stock' WHERE descripcion = '$stock'";
+                        $_conexion -> query($sql);
+                        $stock = $tmp_stock;
+                    }
                 }
             }
 
