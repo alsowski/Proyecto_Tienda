@@ -14,7 +14,7 @@
         session_start();
         if (isset($_SESSION["usuario"])) { ?>
             <h2>Bienvenid@ <?php echo $_SESSION["usuario"] ?> </h2>
-            <a class="btn btn-warning" href="../usuario/cambiar_credenciales.php?usuario=<?php echo $_SESSION["usuario"] ?>">Cambiar credenciales</a>
+            <a class="btn btn-warning" href="../usuario/cambiar_credenciales.php?usuario=<?php echo $_SESSION["usuario"] ?>">Cambiar contraseña</a>
             <a class="btn btn-danger" href="../usuario/cerrar_sesion.php">Cerrar sesion</a>
         <?php } else {
             header("location: ../usuario/iniciar_sesion.php");

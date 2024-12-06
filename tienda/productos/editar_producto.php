@@ -59,7 +59,8 @@
         if($_SERVER["REQUEST_METHOD"] == "POST") {
             $tmp_nombre = depurar($_POST["nombre"]);
             $tmp_precio = depurar($_POST["precio"]);
-            $tmp_categoria = depurar($_POST["categoria"]);
+            if(isset($_POST["categoria"])) $tmp_categoria = depurar($_POST["categoria"]);
+            else $tmp_categoria = "";
             $tmp_stock = depurar($_POST["stock"]);
             $tmp_descripcion = depurar($_POST["descripcion"]);
 
@@ -103,9 +104,14 @@
                 if(strlen($tmp_categoria) > 30){
                     $err_categoria = "La categoria no puede ser mayor a 30 carácteres";
                 } else {
-                    $sql = "UPDATE productos SET categoria = '$tmp_categoria' WHERE id_producto = '$id_producto'";
-                    $_conexion -> query($sql);
-                    $categoria = $tmp_categoria;
+                    if(!in_array($tmp_categoria,$categorias)){
+                        $err_categoria = "La categoria no existe";
+                    } else {
+                        $sql = "UPDATE productos SET categoria = '$tmp_categoria' WHERE id_producto = '$id_producto'";
+                        $_conexion -> query($sql);
+                        $categoria = $tmp_categoria;
+                        
+                    }
                 }
             }
 
