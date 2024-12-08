@@ -37,6 +37,7 @@
         <div class="mb-3">
             <?php if (isset($_SESSION["usuario"])) { ?>
                 <a href="productos/index.php" class="btn btn-success">Ir a tabla de productos</a>
+                <a href="categorias/index.php" class="btn btn-success">Ir a tabla de categorias</a>
             <?php } ?>    
         </div>
         <table class="table table-striped table-hover">

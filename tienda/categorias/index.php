@@ -21,6 +21,11 @@
             exit;
         }
     ?>
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -28,15 +33,24 @@
         <?php
             if($_SERVER["REQUEST_METHOD"] == "POST") {
                 $categoria = $_POST["categoria"];
-                $sql = "DELETE FROM categorias WHERE categoria = '$categoria'";
-                $_conexion -> query($sql);
+                $sql = "SELECT * FROM productos WHERE categoria ='$categoria'";
+                $resultado = $_conexion -> query($sql);
+
+                if($resultado -> num_rows >= 1){
+                    $err_borrar = "Para borrar la categoria, primero tienes que borrar los productos asociados a esta";
+                } else {
+                    $sql = "DELETE FROM categorias WHERE categoria = '$categoria'";
+                    $_conexion -> query($sql);
+                }
             }
 
             $sql = "SELECT * FROM categorias";
             $resultado = $_conexion -> query($sql);
+
         ?>
         <a class="btn btn-outline-primary" href="nueva_categoria.php">Crear nueva categoria</a>
         <a class="btn btn-outline-secondary" href="../productos/index.php">Tabla Productos</a><br><br>
+        <?php if(isset($err_borrar)) echo "<span class='error'>$err_borrar</span><br><br>"; ?>
         <table class="table table-striped table-hover">
             <thead class="table-dark">
                 <tr>
@@ -48,7 +62,7 @@
             </thead>
             <tbody>
                 <?php
-                    while($fila = $resultado -> fetch_assoc()) {    // trata el resultado como un array asociativo
+                    while($fila = $resultado -> fetch_assoc()) {
                         echo "<tr>";
                         echo "<td>" . $fila["categoria"] . "</td>";
                         echo "<td>" . $fila["descripcion"] . "</td>";

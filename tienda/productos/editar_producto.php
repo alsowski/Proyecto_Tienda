@@ -74,8 +74,6 @@
                     if(!preg_match($patron, $tmp_nombre)){
                         $err_nombre = "El nombre solo puede tener letras, numeros y espacios";
                     } else {
-                        $sql = "UPDATE productos SET nombre = '$tmp_nombre' WHERE nombre = '$nombre'";
-                        $_conexion -> query($sql);
                         $nombre = $tmp_nombre;
                     }
                 }
@@ -91,8 +89,6 @@
                     if(!preg_match($patron, $tmp_precio)) {
                         $err_precio = "El precio solo puede contener números";
                     } else {
-                        $sql = "UPDATE productos SET precio = '$tmp_precio' WHERE precio = '$precio'";
-                        $_conexion -> query($sql);
                         $precio = $tmp_precio;
                     }
                 }
@@ -107,10 +103,7 @@
                     if(!in_array($tmp_categoria,$categorias)){
                         $err_categoria = "La categoria no existe";
                     } else {
-                        $sql = "UPDATE productos SET categoria = '$tmp_categoria' WHERE id_producto = '$id_producto'";
-                        $_conexion -> query($sql);
                         $categoria = $tmp_categoria;
-                        
                     }
                 }
             }
@@ -124,8 +117,6 @@
                     if ($tmp_stock < 0 || $tmp_stock > 2147483647) {
                         $err_stock = "El stock tiene que ser un numero entero mayor de 0 y menor de 2147483647";
                     } else {
-                        $sql = "UPDATE productos SET descripcion = '$tmp_stock' WHERE descripcion = '$stock'";
-                        $_conexion -> query($sql);
                         $stock = $tmp_stock;
                     }
                 }
@@ -137,8 +128,6 @@
                 if(strlen($tmp_descripcion) > 255){
                     $err_descripcion = "La descripción no puede ser mayor a 255 carácteres";
                 } else {
-                    $sql = "UPDATE productos SET descripcion = '$tmp_descripcion' WHERE descripcion = '$descripcion'";
-                    $_conexion -> query($sql);
                     $descripcion = $tmp_descripcion;
                 }
             }
